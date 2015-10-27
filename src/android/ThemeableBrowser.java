@@ -903,8 +903,8 @@ public class ThemeableBrowser extends CordovaPlugin {
 
                 // Add the views to our toolbar
                 toolbar.addView(leftButtonContainer);
-                // Don't show address bar.
-                // toolbar.addView(edittext);
+                // Show address bar!
+                toolbar.addView(edittext);
                 toolbar.addView(rightButtonContainer);
 
                 if (title != null) {
