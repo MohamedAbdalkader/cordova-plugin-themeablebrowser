@@ -554,14 +554,17 @@ public class ThemeableBrowser extends CordovaPlugin {
 
                 // Toolbar layout
                 Toolbar toolbarDef = features.toolbar;
-                FrameLayout toolbar = new FrameLayout(cordova.getActivity());
+                RelativeLayout toolbar = new RelativeLayout(cordova.getActivity());
                 toolbar.setBackgroundColor(hexStringToColor(
                         toolbarDef != null && toolbarDef.color != null
                                 ? toolbarDef.color : "#ffffffff"));
-                toolbar.setLayoutParams(new ViewGroup.LayoutParams(
+                toolbar.setLayoutParams(new RelativeLayout.LayoutParams(
                         LayoutParams.MATCH_PARENT,
                         dpToPixels(toolbarDef != null
                                 ? toolbarDef.height : TOOLBAR_DEF_HEIGHT)));
+                //toolbar.setPadding(dpToPixels(2), dpToPixels(2), dpToPixels(2), dpToPixels(2));
+                toolbar.setHorizontalGravity(Gravity.FILL_HORIZONTAL);
+                toolbar.setVerticalGravity(Gravity.TOP);
 
                 if (toolbarDef != null
                         && (toolbarDef.image != null || toolbarDef.wwwImage != null)) {
@@ -582,23 +585,28 @@ public class ThemeableBrowser extends CordovaPlugin {
 
                 // Left Button Container layout
                 LinearLayout leftButtonContainer = new LinearLayout(cordova.getActivity());
-                FrameLayout.LayoutParams leftButtonContainerParams = new FrameLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-                leftButtonContainerParams.gravity = Gravity.LEFT | Gravity.CENTER_VERTICAL;
+                RelativeLayout.LayoutParams leftButtonContainerParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+                //leftButtonContainerParams.addRule(RelativeLayout.LEFT_OF, 2);
                 leftButtonContainer.setLayoutParams(leftButtonContainerParams);
+                leftButtonContainer.setHorizontalGravity(Gravity.LEFT);
                 leftButtonContainer.setVerticalGravity(Gravity.CENTER_VERTICAL);
+                leftButtonContainer.setId(1);
 
                 // Right Button Container layout
                 LinearLayout rightButtonContainer = new LinearLayout(cordova.getActivity());
-                FrameLayout.LayoutParams rightButtonContainerParams = new FrameLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-                rightButtonContainerParams.gravity = Gravity.RIGHT | Gravity.CENTER_VERTICAL;
+                RelativeLayout.LayoutParams rightButtonContainerParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+                //rightButtonContainerParams.addRule(RelativeLayout.RIGHT_OF, 2);
+                rightButtonContainerParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
                 rightButtonContainer.setLayoutParams(rightButtonContainerParams);
+                rightButtonContainer.setHorizontalGravity(Gravity.RIGHT);
                 rightButtonContainer.setVerticalGravity(Gravity.CENTER_VERTICAL);
+                rightButtonContainer.setId(3);
 
                 // Edit Text Box
                 edittext = new EditText(cordova.getActivity());
                 RelativeLayout.LayoutParams textLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
                 textLayoutParams.addRule(RelativeLayout.RIGHT_OF, 1);
-                textLayoutParams.addRule(RelativeLayout.LEFT_OF, 5);
+                textLayoutParams.addRule(RelativeLayout.LEFT_OF, 3);
                 edittext.setLayoutParams(textLayoutParams);
                 edittext.setSingleLine(true);
                 edittext.setText(url);
@@ -616,6 +624,7 @@ public class ThemeableBrowser extends CordovaPlugin {
                         return false;
                     }
                 });
+                edittext.setId(2);
 
                 // Back button
                 final Button back = createButton(
