@@ -504,7 +504,14 @@ public class ThemeableBrowser extends CordovaPlugin {
         InputMethodManager imm = (InputMethodManager)this.cordova.getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(edittext.getWindowToken(), 0);
 
-        if (!url.startsWith("http") && !url.startsWith("file:")) {
+        if (!url.startsWith("http") &&
+            !url.startsWith("ftp:") &&
+            !url.startsWith("file:") &&
+            !url.startsWith("gopher:") &&
+            !url.startsWith("chrome-extension:") &&
+            !url.startsWith("about:") &&
+            !url.startsWith("data:") &&
+            !url.startsWith("javascript:")) {
             this.inAppWebView.loadUrl("http://" + url);
         } else {
             this.inAppWebView.loadUrl(url);
