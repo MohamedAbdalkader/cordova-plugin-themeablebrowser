@@ -49,6 +49,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.CookieManager;
+import android.webkit.URLUtil;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -495,26 +496,31 @@ public class ThemeableBrowser extends CordovaPlugin {
         }
     }
 
+    private String getSearchUrl(String query) {
+        return URLUtil.composeSearchUrl(query, "https://www.google.com/search?q=QUERY", "QUERY");
+    }
+
     /**
      * Navigate to the new page
      *
      * @param url to load
      */
-    private void navigate(String url) {
+    private void navigate(String location) {
         InputMethodManager imm = (InputMethodManager)this.cordova.getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(edittext.getWindowToken(), 0);
 
-        if (!url.startsWith("http") &&
-            !url.startsWith("ftp:") &&
-            !url.startsWith("file:") &&
-            !url.startsWith("gopher:") &&
-            !url.startsWith("chrome-extension:") &&
-            !url.startsWith("about:") &&
-            !url.startsWith("data:") &&
-            !url.startsWith("javascript:")) {
-            this.inAppWebView.loadUrl("http://" + url);
+        if (URLUtil.isValidUrl(location)) {
+            this.inAppWebView.loadUrl(location);
+        } else if (location.contains(" ") || !location.contains(".")) {
+            this.inAppWebView.loadUrl(this.getSearchUrl(location));
         } else {
-            this.inAppWebView.loadUrl(url);
+            Uri uri = Uri.parse(location);
+            String host = uri.getHost();
+            if (host != null && host.contains(".")) {
+                this.inAppWebView.loadUrl("http://" + location);
+            } else {
+                this.inAppWebView.loadUrl(this.getSearchUrl(location));
+            }
         }
         this.inAppWebView.requestFocus();
     }
@@ -1287,7 +1293,7 @@ public class ThemeableBrowser extends CordovaPlugin {
                             String.format("Error sending sms %s: %s", url, e.toString()));
                 }
             }
-            else {
+            else if (!URLUtil.isValidUrl(url)) {
                 newloc = "http://" + url;
             }
 
